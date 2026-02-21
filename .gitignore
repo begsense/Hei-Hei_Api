@@ -1,0 +1,55 @@
+## Visual Studio Build Results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio Environment & User Files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+## ASP.NET Core & .NET 8 Specifics
+.vscode/
+.devcontainer/
+bin/
+obj/
+_containerent/
+publish/
+*.azurepubxml
+/aspnetcore-browser-refresh.js
+
+## Secrets & Local Configuration
+# Highly recommended to keep local secrets out of source control
+# Use 'User Secrets' or environment variables for production secrets
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.env
+
+## Entity Framework Core
+*.migrations.log
+*.db
+*.db-shm
+*.db-wal
+
+## Test Results & Coverage
+TestResults/
+*.sequenced
+chrome_debug.log
+/Artifacts/
+
+## Operating System Files
+.DS_Store
+Thumbs.db
+
