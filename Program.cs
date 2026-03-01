@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Hei_Hei_Api.Validators;
+using Hei_Hei_Api.Interfaces;
+using Hei_Hei_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,8 @@ builder.Services.AddAuthentication(option =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 var app = builder.Build();
 

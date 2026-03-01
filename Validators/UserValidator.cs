@@ -14,9 +14,11 @@ public class UserValidator : AbstractValidator<CreateUserRequest>
             .NotEmpty().WithMessage("UserName is required.")
             .MinimumLength(3).WithMessage("UserName must be at least 3 characters long.")
             .MaximumLength(20).WithMessage("UserName must be at most 20 characters long.");
-        RuleFor(x => x.PasswordHash)
+        RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
-            .Matches(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
+            .MinimumLength(8).WithMessage("Password must be at least 8 characters.")
+            .Matches(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$")
+            .WithMessage("Password must contain at least one uppercase letter, one lowercase letter and one number.");
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("FullName is required.")
             .MinimumLength(3).WithMessage("Last name must be at least 3 characters long.")

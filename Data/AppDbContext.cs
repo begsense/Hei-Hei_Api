@@ -65,5 +65,13 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<OrderAnimator>()
             .Property(oa => oa.AssignedAmount)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
     }
 }

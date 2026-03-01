@@ -12,7 +12,7 @@ public class User : BaseEntity
     public string PhoneNumber { get; set; }
     public string HomeAddress { get; set; }
     public UserRole Role { get; set; } = UserRole.User;
-    public bool EmailConfirmed { get; set; }
+    public bool EmailConfirmed { get; set; } = false;
     public Animator Animator { get; set; }
     public List<Order> Orders { get; set; }
 }
