@@ -13,5 +13,6 @@ public class MappingProfile : Profile
         CreateMap<User, CreateUserResponse>();
         CreateMap<LoginUserRequest, User>();
         CreateMap<User, LoginUserResponse>();
+        CreateMap<User, GetUserResponse>(); 
     }
 }

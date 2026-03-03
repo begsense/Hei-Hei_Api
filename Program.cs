@@ -47,6 +47,7 @@ builder.Services.AddAuthentication(option =>
     });
 
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 var app = builder.Build();
 
