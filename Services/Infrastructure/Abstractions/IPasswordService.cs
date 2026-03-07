@@ -1,4 +1,4 @@
-﻿namespace Hei_Hei_Api.Interfaces;
+﻿namespace Hei_Hei_Api.Services.Infrastructure.Abstractions;
 
 public interface IPasswordService
 {

@@ -1,7 +1,7 @@
 ﻿using BCrypt.Net;
-using Hei_Hei_Api.Interfaces;
+using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 
-namespace Hei_Hei_Api.Services;
+namespace Hei_Hei_Api.Services.Infrastructure.Implementations;
 
 public class PasswordService : IPasswordService
 {

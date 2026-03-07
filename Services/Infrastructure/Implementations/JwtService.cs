@@ -1,11 +1,11 @@
-﻿using Hei_Hei_Api.Interfaces;
-using Hei_Hei_Api.Models;
+﻿using Hei_Hei_Api.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 
-namespace Hei_Hei_Api.Services;
+namespace Hei_Hei_Api.Services.Infrastructure.Implementations;
 
 public class JwtService : IJwtService
 {
@@ -18,7 +18,7 @@ public class JwtService : IJwtService
 
     public string GenerateToken(User user)
     {
-        var secretKey = _configuration["Jwt:SecretKey"]
+        var secretKey = _configuration["Jwt:Key"]
             ?? throw new InvalidOperationException("JWT SecretKey is not configured.");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
