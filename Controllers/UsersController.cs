@@ -51,7 +51,7 @@ public class UsersController : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {
@@ -69,12 +69,12 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var response = await _userService.ChangePasswordAsync(id, request, User);
-            return Ok(response);
+            await _userService.ChangePasswordAsync(id, request, User);
+            return Ok(new { message = "Password changed successfully." });
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {
@@ -86,7 +86,7 @@ public class UsersController : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}/role")]
     public async Task<IActionResult> ChangeUserRole(int id, UpdateUserRoleRequest request)
     {
@@ -97,7 +97,7 @@ public class UsersController : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {
@@ -118,9 +118,9 @@ public class UsersController : ControllerBase
             await _userService.DeleteUserAsync(id, User);
             return NoContent();
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            return Forbid();
+            return StatusCode(403, new { message = ex.Message });
         }
         catch (KeyNotFoundException ex)
         {

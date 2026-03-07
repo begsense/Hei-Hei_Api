@@ -6,6 +6,7 @@ using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Users;
 using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Infrastructure.Abstractions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -59,8 +60,6 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found.");
         }
 
-        _mapper.Map(request, user);
-
         bool isUpdated = false;
 
         if (!string.IsNullOrWhiteSpace(request.FullName))
@@ -94,7 +93,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<GetUserResponse> ChangePasswordAsync(int id, UpdatePasswordRequest request, ClaimsPrincipal currentUser)
+    public async Task ChangePasswordAsync(int id, UpdatePasswordRequest request, ClaimsPrincipal currentUser)
     {
         if (!IsAdminOrOwner(id, currentUser))
         {
@@ -122,8 +121,6 @@ public class UserService : IUserService
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-
-        return _mapper.Map<GetUserResponse>(user);
     }
 
     public async Task<GetUserResponse> ChangeUserRoleAsync(int id, UpdateUserRoleRequest request, ClaimsPrincipal currentUser)
@@ -140,7 +137,10 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found.");
         }
 
-        user.Role = Enum.Parse<UserRole>(request.NewRole, ignoreCase: true);
+        if (!Enum.TryParse<UserRole>(request.NewRole, ignoreCase: true, out var newRole))
+            throw new ArgumentException($"Invalid role: {request.NewRole}");
+
+        user.Role = newRole;
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
