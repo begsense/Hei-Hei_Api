@@ -42,20 +42,70 @@ public class UsersController : ControllerBase
 
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, UpdateUserRequest request)
+    public async Task<IActionResult> UpdateUserDetails(int id, UpdateUserRequest request)
     {
         try
         {
             var response = await _userService.UpdateUserAsync(id, request, User);
             return Ok(response);
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            return Forbid();
+            return Forbid(ex.Message);
         }
         catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPut("{id}/password")]
+    public async Task<IActionResult> ChangePassword(int id, UpdatePasswordRequest request)
+    {
+        try
+        {
+            var response = await _userService.ChangePasswordAsync(id, request, User);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPut("{id}/role")]
+    public async Task<IActionResult> ChangeUserRole(int id, UpdateUserRoleRequest request)
+    {
+        try
+        {
+            var response = await _userService.ChangeUserRoleAsync(id, request, User);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 
