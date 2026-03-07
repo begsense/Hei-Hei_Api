@@ -144,7 +144,7 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found.");
         }
 
-        if (!Enum.TryParse<UserRole>(request.NewRole, ignoreCase: true, out var newRole))
+        if (!Enum.TryParse<USER_ROLE>(request.NewRole, ignoreCase: true, out var newRole))
             throw new ArgumentException($"Invalid role: {request.NewRole}");
 
         user.Role = newRole;

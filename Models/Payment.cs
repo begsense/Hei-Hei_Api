@@ -10,7 +10,7 @@ public class Payment : BaseEntity
     public PaymentMethod PaymentMethod { get; set; }
     public DateTime? PaymentDate { get; set; }
     public string TransactionId { get; set; }
-    public PaymentStatus Status { get; set; }
+    public PAYMENT_STATUS Status { get; set; }
     public int OrderId { get; set; }
     public Order Order { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum OrderStatus
+public enum ORDER_STATUS
 {
     Pending,
     Confirmed,

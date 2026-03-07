@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum HeroRole
+public enum HERO_ROLE
 {
     Main,
     Support

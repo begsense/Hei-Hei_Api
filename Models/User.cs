@@ -11,7 +11,7 @@ public class User : BaseEntity
     public string FullName { get; set; }
     public string PhoneNumber { get; set; }
     public string HomeAddress { get; set; }
-    public UserRole Role { get; set; } = UserRole.User;
+    public USER_ROLE Role { get; set; } = USER_ROLE.User;
     public bool EmailConfirmed { get; set; } = false;
     public string? EmailVerificationCode { get; set; }
     public DateTime? EmailVerificationCodeExpiresAt { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum PaymentStatus
+public enum PAYMENT_STATUS
 {
     Pending,
     Completed,

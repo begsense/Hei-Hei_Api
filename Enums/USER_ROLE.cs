@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum UserRole
+public enum USER_ROLE
 {
     Admin,
     Animator,

@@ -29,6 +29,28 @@ namespace Hei_Hei_Api.Controllers
             }
         }
 
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request)
+        {
+            try
+            {
+                await _authService.VerifyEmailAsync(request);
+                return Ok(new { Message = "Email verified successfully. You can now log in." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginUserRequest request)
         {
