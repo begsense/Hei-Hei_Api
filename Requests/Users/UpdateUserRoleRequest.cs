@@ -2,5 +2,5 @@
 
 public class UpdateUserRoleRequest
 {
-    public string NewRole { get; set; } = string.Empty;
+    public string NewRole { get; set; }
 }

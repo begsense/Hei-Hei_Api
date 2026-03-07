@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Hei_Hei_Api.Data;
 using Hei_Hei_Api.Enums;
+using Hei_Hei_Api.Helpers;
 using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Users;
@@ -17,15 +18,15 @@ public class UserService : IUserService
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly IPasswordService _passwordService;
+    private readonly IEmailService _emailService;
 
-    public UserService(AppDbContext context, IMapper mapper, IPasswordService passwordService)
+    public UserService(AppDbContext context, IMapper mapper, IPasswordService passwordService, IEmailService emailService)
     {
         _context = context;
         _mapper = mapper;
         _passwordService = passwordService;
+        _emailService = emailService;
     }
-
-
 
     public async Task<List<GetUserResponse>> GetAllUsersAsync()
     {
@@ -121,6 +122,12 @@ public class UserService : IUserService
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
+        _ = _emailService.SendEmailAsync(
+            user.Email,
+            "Your password was changed",
+            EmailTemplates.PasswordChanged(user.FullName)
+        );
     }
 
     public async Task<GetUserResponse> ChangeUserRoleAsync(int id, UpdateUserRoleRequest request, ClaimsPrincipal currentUser)
@@ -162,9 +169,18 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found.");
         }
 
+        var email = user.Email;
+        var fullName = user.FullName;
+
         _context.Users.Remove(user);
 
         await _context.SaveChangesAsync();
+
+        _ = _emailService.SendEmailAsync(
+            email,
+            "Your account has been deleted",
+            EmailTemplates.AccountDeleted(fullName)
+        );
     }
 
     private bool IsAdminOrOwner(int id, ClaimsPrincipal currentUser)

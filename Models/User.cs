@@ -13,6 +13,8 @@ public class User : BaseEntity
     public string HomeAddress { get; set; }
     public UserRole Role { get; set; } = UserRole.User;
     public bool EmailConfirmed { get; set; } = false;
+    public string? EmailVerificationCode { get; set; }
+    public DateTime? EmailVerificationCodeExpiresAt { get; set; }
     public Animator Animator { get; set; }
     public List<Order> Orders { get; set; }
 }
