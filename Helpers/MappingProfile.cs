@@ -15,7 +15,7 @@ public class MappingProfile : Profile
         CreateMap<User, LoginUserResponse>();
         CreateMap<User, GetUserResponse>();
         CreateMap<UpdateUserRequest, User>()
-            .ForAllMembers(opt => 
+            .ForAllMembers(opt =>
             opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

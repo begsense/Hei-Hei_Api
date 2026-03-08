@@ -18,51 +18,26 @@ namespace Hei_Hei_Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> CreateUser(CreateUserRequest request)
         {
-            try
-            {
-                var response = await _authService.RegisterAsync(request);
-                return Ok(response);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var response = await _authService.RegisterAsync(request);
+            return Ok(response);
+
         }
 
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request)
         {
-            try
-            {
-                await _authService.VerifyEmailAsync(request);
-                return Ok(new { Message = "Email verified successfully. You can now log in." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            await _authService.VerifyEmailAsync(request);
+            return Ok(new { Message = "Email verified successfully. You can now log in." });
+
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginUserRequest request)
         {
-            try
-            {
-                var response = await _authService.LoginAsync(request);
-                return Ok(response);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
+            var response = await _authService.LoginAsync(request);
+            return Ok(response);
         }
     }
 }

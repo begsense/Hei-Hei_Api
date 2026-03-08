@@ -11,16 +11,16 @@ public interface IUserService
     Task<GetUserResponse> GetUserByIdAsync(int id);
 
     Task<GetUserResponse> UpdateUserAsync(
-        int id, 
-        UpdateUserRequest request, 
+        int id,
+        UpdateUserRequest request,
         ClaimsPrincipal currentUser);
 
-    Task ChangePasswordAsync(int id, 
-        UpdatePasswordRequest request, 
+    Task ChangePasswordAsync(int id,
+        UpdatePasswordRequest request,
         ClaimsPrincipal currentUser);
 
-    Task<GetUserResponse> ChangeUserRoleAsync(int id, 
-        UpdateUserRoleRequest request, 
+    Task<GetUserResponse> ChangeUserRoleAsync(int id,
+        UpdateUserRoleRequest request,
         ClaimsPrincipal currentUser);
 
     Task DeleteUserAsync(int id, ClaimsPrincipal currentUser);

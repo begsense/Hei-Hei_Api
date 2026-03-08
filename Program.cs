@@ -10,6 +10,7 @@ using Hei_Hei_Api.Services.Infrastructure.Implementations;
 using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Application.Implementations;
+using Hei_Hei_Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +87,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
