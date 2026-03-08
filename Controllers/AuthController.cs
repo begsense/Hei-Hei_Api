@@ -20,8 +20,8 @@ namespace Hei_Hei_Api.Controllers
         {
 
             var response = await _authService.RegisterAsync(request);
-            return Ok(response);
 
+            return StatusCode(201, response);
         }
 
         [HttpPost("verify-email")]
@@ -29,14 +29,15 @@ namespace Hei_Hei_Api.Controllers
         {
 
             await _authService.VerifyEmailAsync(request);
-            return Ok(new { Message = "Email verified successfully. You can now log in." });
 
+            return Ok(new { Message = "Email verified successfully. You can now log in." });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginUserRequest request)
         {
             var response = await _authService.LoginAsync(request);
+
             return Ok(response);
         }
     }

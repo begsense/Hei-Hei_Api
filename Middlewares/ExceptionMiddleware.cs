@@ -30,8 +30,13 @@ public class ExceptionMiddleware
         var (statusCode, message) = exception switch
         {
             KeyNotFoundException ex => (HttpStatusCode.NotFound, ex.Message),
-            UnauthorizedAccessException ex => (HttpStatusCode.Forbidden, ex.Message),
             InvalidOperationException ex => (HttpStatusCode.BadRequest, ex.Message),
+            UnauthorizedAccessException ex when ex.Message.Contains("credentials")
+                => (HttpStatusCode.Unauthorized, ex.Message),
+            UnauthorizedAccessException ex when ex.Message.Contains("verify your email")
+                => (HttpStatusCode.Unauthorized, ex.Message),
+            UnauthorizedAccessException ex
+                => (HttpStatusCode.Forbidden, ex.Message),
             ArgumentException ex => (HttpStatusCode.BadRequest, ex.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };

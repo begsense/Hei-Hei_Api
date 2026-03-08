@@ -2,12 +2,10 @@
 using Hei_Hei_Api.Data;
 using Hei_Hei_Api.Enums;
 using Hei_Hei_Api.Helpers;
-using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Users;
 using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Infrastructure.Abstractions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 

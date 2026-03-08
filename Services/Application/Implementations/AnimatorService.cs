@@ -1,4 +1,5 @@
-﻿using Hei_Hei_Api.Data;
+﻿using AutoMapper;
+using Hei_Hei_Api.Data;
 using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Animators;
 using Hei_Hei_Api.Responses.Animators;
@@ -11,10 +12,12 @@ namespace Hei_Hei_Api.Services.Application.Implementations;
 public class AnimatorService : IAnimatorService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public AnimatorService(AppDbContext context)
+    public AnimatorService(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<AddAnimatorInfoResponse> AddAnimatorInfoAsync(
@@ -40,11 +43,7 @@ public class AnimatorService : IAnimatorService
         _context.Animators.Add(animator);
         await _context.SaveChangesAsync();
 
-        return new AddAnimatorInfoResponse
-        {
-            Id = animator.Id,
-            Bio = animator.Bio
-        };
+        return _mapper.Map<AddAnimatorInfoResponse>(animator);
     }
 
     public async Task<GetAnimatorResponse> GetMyAnimatorProfileAsync(ClaimsPrincipal userClaims)
@@ -60,7 +59,7 @@ public class AnimatorService : IAnimatorService
             throw new KeyNotFoundException("Animator profile not found.");
         }
 
-        return MapToResponse(animator);
+        return _mapper.Map<GetAnimatorResponse>(animator);
     }
 
     public async Task<UpdateAnimatorResponse> UpdateAnimatorProfileAsync(
@@ -85,11 +84,7 @@ public class AnimatorService : IAnimatorService
 
         await _context.SaveChangesAsync();
 
-        return new UpdateAnimatorResponse
-        {
-            Id = animator.Id,
-            Bio = animator.Bio
-        };
+        return _mapper.Map<UpdateAnimatorResponse>(animator);
     }
 
     public async Task<DeleteAnimatorResponse> DeleteAnimatorAsync(int id, ClaimsPrincipal userClaims)
@@ -128,7 +123,7 @@ public class AnimatorService : IAnimatorService
             throw new KeyNotFoundException("Animator not found.");
         }
 
-        return MapToResponse(animator);
+        return _mapper.Map<GetAnimatorResponse>(animator);
     }
 
     public async Task<List<GetAnimatorResponse>> GetAllAnimatorsAsync()
@@ -137,7 +132,7 @@ public class AnimatorService : IAnimatorService
             .Include(a => a.User)
             .ToListAsync();
 
-        return animators.Select(MapToResponse).ToList();
+        return _mapper.Map<List<GetAnimatorResponse>>(animators);
     }
 
     private int GetUserId(ClaimsPrincipal userClaims)
@@ -162,18 +157,5 @@ public class AnimatorService : IAnimatorService
         }
 
         return currentUser.IsInRole("Admin") || userIdFromToken == userId.ToString();
-    }
-
-    private GetAnimatorResponse MapToResponse(Animator animator)
-    {
-        return new GetAnimatorResponse
-        {
-            Email = animator.User.Email,
-            UserName = animator.User.UserName,
-            FullName = animator.User.FullName,
-            PhoneNumber = animator.User.PhoneNumber,
-            HomeAddress = animator.User.HomeAddress,
-            Bio = animator.Bio
-        };
     }
 }

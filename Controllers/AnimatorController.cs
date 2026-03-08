@@ -22,7 +22,7 @@ namespace Hei_Hei_Api.Controllers
         {
             var result = await _animatorService.AddAnimatorInfoAsync(request, User);
 
-            return Ok(result);
+            return CreatedAtAction(nameof(GetAnimatorById), new { id = result.Id }, result);
         }
 
         [Authorize]
