@@ -11,6 +11,7 @@ using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Application.Implementations;
 using Hei_Hei_Api.Middlewares;
+using Hei_Hei_Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +80,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<ILoggerService, LoggerService>();
 
 var app = builder.Build();
 
@@ -89,6 +91,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
