@@ -5,6 +5,7 @@ namespace Hei_Hei_Api.Models;
 public class Animator : BaseEntity
 {
     public string Bio { get; set; }
+    public string ImageUrl { get; set; }
     public int UserId { get; set; }
     public User User { get; set; }
     public List<OrderAnimator> OrderAnimators { get; set; }

@@ -35,6 +35,15 @@ namespace Hei_Hei_Api.Controllers
         }
 
         [Authorize]
+        [HttpPut("{id}/image")]
+        public async Task<IActionResult> UploadProfileImage(int id, IFormFile file)
+        {
+            var result = await _animatorService.UploadProfileImageAsync(id, file, User);
+
+            return Ok(result);
+        }
+
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAnimatorProfile(int id, UpdateAnimatorRequest request)
         {

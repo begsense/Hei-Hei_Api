@@ -4,6 +4,7 @@ using Hei_Hei_Api.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Amazon.S3;
 using System.Text;
 using Hei_Hei_Api.Validators;
 using Hei_Hei_Api.Services.Infrastructure.Implementations;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddSingleton<ILoggerService, LoggerService>();
 
 var app = builder.Build();

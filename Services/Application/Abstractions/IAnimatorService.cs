@@ -13,6 +13,11 @@ public interface IAnimatorService
     Task<GetAnimatorResponse> GetMyAnimatorProfileAsync(
         ClaimsPrincipal userClaims);
 
+    Task<GetAnimatorResponse> UploadProfileImageAsync(
+        int id, 
+        IFormFile file, 
+        ClaimsPrincipal userClaims);
+
     Task<GetAnimatorResponse> GetAnimatorByIdAsync(int id);
 
     Task<List<GetAnimatorResponse>> GetAllAnimatorsAsync();

@@ -4,6 +4,7 @@ using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Animators;
 using Hei_Hei_Api.Responses.Animators;
 using Hei_Hei_Api.Services.Application.Abstractions;
+using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -13,11 +14,13 @@ public class AnimatorService : IAnimatorService
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IS3Service _s3Service;
 
-    public AnimatorService(AppDbContext context, IMapper mapper)
+    public AnimatorService(AppDbContext context, IMapper mapper, IS3Service s3Service)
     {
         _context = context;
         _mapper = mapper;
+        _s3Service = s3Service;
     }
 
     public async Task<AddAnimatorInfoResponse> AddAnimatorInfoAsync(
@@ -62,6 +65,39 @@ public class AnimatorService : IAnimatorService
         return _mapper.Map<GetAnimatorResponse>(animator);
     }
 
+    public async Task<GetAnimatorResponse> UploadProfileImageAsync(int id, IFormFile file, ClaimsPrincipal userClaims)
+    {
+        var animator = await _context.Animators
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (animator == null)
+            throw new KeyNotFoundException("Animator not found.");
+
+        if (!IsAdminOrOwner(animator.UserId, userClaims))
+            throw new UnauthorizedAccessException("You cannot update this animator.");
+
+        if (file == null || file.Length == 0)
+            throw new ArgumentException("No file provided.");
+
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+        if (!allowedTypes.Contains(file.ContentType.ToLower()))
+            throw new ArgumentException("Only JPEG, PNG, and WebP images are allowed.");
+
+        const long maxSize = 5 * 1024 * 1024;
+        if (file.Length > maxSize)
+            throw new ArgumentException("File size must not exceed 5MB.");
+
+        var imageUrl = await _s3Service.UploadPublicFileAsync(file, "animators");
+
+        animator.ImageUrl = imageUrl;
+        animator.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<GetAnimatorResponse>(animator);
+    }
+
     public async Task<UpdateAnimatorResponse> UpdateAnimatorProfileAsync(
         int id,
         UpdateAnimatorRequest request,
@@ -81,6 +117,7 @@ public class AnimatorService : IAnimatorService
         }
 
         animator.Bio = request.Bio;
+        animator.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 

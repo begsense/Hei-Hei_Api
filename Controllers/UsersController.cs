@@ -29,50 +29,44 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
-
         var response = await _userService.GetUserByIdAsync(id);
-        return Ok(response);
 
+        return Ok(response);
     }
 
     [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUserDetails(int id, UpdateUserRequest request)
     {
-
         var response = await _userService.UpdateUserAsync(id, request, User);
-        return Ok(response);
 
+        return Ok(response);
     }
 
     [Authorize]
     [HttpPut("{id}/password")]
     public async Task<IActionResult> ChangePassword(int id, UpdatePasswordRequest request)
     {
-
         await _userService.ChangePasswordAsync(id, request, User);
-        return Ok(new { message = "Password changed successfully." });
 
+        return Ok(new { message = "Password changed successfully." });
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}/role")]
     public async Task<IActionResult> ChangeUserRole(int id, UpdateUserRoleRequest request)
     {
-
         var response = await _userService.ChangeUserRoleAsync(id, request, User);
-        return Ok(response);
 
+        return Ok(response);
     }
 
     [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-
         await _userService.DeleteUserAsync(id, User);
+
         return NoContent();
-
-
     }
 }
