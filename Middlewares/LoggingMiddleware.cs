@@ -7,17 +7,16 @@ namespace Hei_Hei_Api.Middleware;
 public class LoggingMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILoggerService _loggerService;
 
-    public LoggingMiddleware(RequestDelegate next, ILoggerService loggerService)
+    public LoggingMiddleware(RequestDelegate next)
     {
         _next = next;
-        _loggerService = loggerService;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ILoggerService loggerService)
     {
         context.Request.EnableBuffering();
+
         var requestBody = await ReadStreamAsync(context.Request.Body);
         context.Request.Body.Position = 0;
 
@@ -37,7 +36,7 @@ public class LoggingMiddleware
             responseBuffer.Position = 0;
             await responseBuffer.CopyToAsync(originalResponseStream);
 
-            await _loggerService.LogAsync(
+            await loggerService.LogAsync(
                 context.Request.Method,
                 context.Request.Path,
                 context.Response.StatusCode,
@@ -49,7 +48,8 @@ public class LoggingMiddleware
         catch (Exception ex)
         {
             stopwatch.Stop();
-            await _loggerService.LogErrorAsync(
+
+            await loggerService.LogErrorAsync(
                 context.Request.Method,
                 context.Request.Path,
                 ex

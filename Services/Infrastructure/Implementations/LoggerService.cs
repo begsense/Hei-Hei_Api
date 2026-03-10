@@ -6,9 +6,14 @@ public class LoggerService : ILoggerService
 {
     private readonly string _logDirectory;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly IS3Service _s3Service;
+    private readonly IConfiguration _config;
 
-    public LoggerService(IConfiguration configuration)
+    public LoggerService(IConfiguration configuration, IS3Service s3Service)
     {
+        _config = configuration;
+        _s3Service = s3Service;
+
         _logDirectory = configuration["Logging:LogDirectory"] ?? "Logs";
         Directory.CreateDirectory(_logDirectory);
     }
@@ -40,6 +45,19 @@ public class LoggerService : ILoggerService
             """;
 
         await WriteAsync(entry);
+    }
+
+    public async Task UploadTodayLogToS3Async()
+    {
+        var fileName = $"{DateTime.UtcNow:yyyy-MM-dd}.log";
+        var filePath = Path.Combine(_logDirectory, fileName);
+
+        if (!File.Exists(filePath))
+            return;
+
+        await using var stream = File.OpenRead(filePath);
+
+        await _s3Service.UploadPrivateFileAsync(stream, $"logs/{fileName}", "text/plain");
     }
 
     private async Task WriteAsync(string entry)
