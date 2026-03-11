@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hei_Hei_Api.Controllers
 {
-    [Route("api/animator")]
+    [Route("api/animators")]
     [ApiController]
-    public class AnimatorController : ControllerBase
+    public class AnimatorsController : ControllerBase
     {
         private readonly IAnimatorService _animatorService;
 
-        public AnimatorController(IAnimatorService animatorService)
+        public AnimatorsController(IAnimatorService animatorService)
         {
             _animatorService = animatorService;
         }

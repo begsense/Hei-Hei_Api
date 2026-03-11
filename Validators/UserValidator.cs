@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Hei_Hei_Api.Enums;
 using Hei_Hei_Api.Requests.Users;
 
 namespace Hei_Hei_Api.Validators;

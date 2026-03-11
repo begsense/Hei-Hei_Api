@@ -78,14 +78,15 @@ builder.Services.AddAuthentication(option =>
         };
     });
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAnimatorService, AnimatorService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAnimatorService, AnimatorService>();
+builder.Services.AddScoped<IHeroService, HeroService>();
 
 var app = builder.Build();
 

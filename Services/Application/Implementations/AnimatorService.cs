@@ -81,12 +81,18 @@ public class AnimatorService : IAnimatorService
             throw new ArgumentException("No file provided.");
 
         var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+
         if (!allowedTypes.Contains(file.ContentType.ToLower()))
+        {
             throw new ArgumentException("Only JPEG, PNG, and WebP images are allowed.");
+        }
 
         const long maxSize = 5 * 1024 * 1024;
+
         if (file.Length > maxSize)
+        {
             throw new ArgumentException("File size must not exceed 5MB.");
+        }
 
         var imageUrl = await _s3Service.UploadPublicFileAsync(file, "animators");
 
