@@ -1,5 +1,6 @@
 ﻿
 using System.Net;
+using Hei_Hei_Api.Exceptions;
 using System.Text.Json;
 
 namespace Hei_Hei_Api.Middlewares;
@@ -30,13 +31,18 @@ public class ExceptionMiddleware
         var (statusCode, message) = exception switch
         {
             KeyNotFoundException ex => (HttpStatusCode.NotFound, ex.Message),
+
             InvalidOperationException ex => (HttpStatusCode.BadRequest, ex.Message),
-            UnauthorizedAccessException ex when ex.Message.Contains("credentials")
-                => (HttpStatusCode.Unauthorized, ex.Message),
-            UnauthorizedAccessException ex when ex.Message.Contains("verify your email")
-                => (HttpStatusCode.Unauthorized, ex.Message),
+
+            InvalidCredentialsException ex => (HttpStatusCode.Unauthorized, ex.Message),
+
+            EmailNotVerifiedException ex => (HttpStatusCode.Unauthorized, ex.Message),
+
             UnauthorizedAccessException ex
-                => (HttpStatusCode.Forbidden, ex.Message),
+                => (HttpStatusCode.Forbidden, string.IsNullOrEmpty(ex.Message)
+                    ? "You do not have permission to perform this action."
+                    : ex.Message),
+
             ArgumentException ex => (HttpStatusCode.BadRequest, ex.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };

@@ -21,7 +21,7 @@ namespace Hei_Hei_Api.Controllers
 
             var response = await _authService.RegisterAsync(request);
 
-            return StatusCode(201, response);
+            return CreatedAtAction(nameof(VerifyEmail), new { email = response.Email }, response);
         }
 
         [HttpPost("verify-email")]

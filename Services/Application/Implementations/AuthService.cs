@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hei_Hei_Api.Data;
+using Hei_Hei_Api.Exceptions;
 using Hei_Hei_Api.Helpers;
 using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Users;
@@ -18,14 +19,16 @@ public class AuthService : IAuthService
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
     private readonly IEmailService _emailService;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(AppDbContext context, IMapper mapper, IPasswordService passwordService, IJwtService jwtService, IEmailService emailService)
+    public AuthService(AppDbContext context, IMapper mapper, IPasswordService passwordService, IJwtService jwtService, IEmailService emailService, ILogger<AuthService> logger)
     {
         _context = context;
         _mapper = mapper;
         _passwordService = passwordService;
         _jwtService = jwtService;
         _emailService = emailService;
+        _logger = logger;
     }
 
     public async Task<CreateUserResponse> RegisterAsync(CreateUserRequest request)
@@ -55,11 +58,18 @@ public class AuthService : IAuthService
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        await _emailService.SendEmailAsync(
-            user.Email,
-            "Verify your Hei-Hei account",
-            EmailTemplates.VerificationCode(user.FullName, code)
-        );
+        try
+        {
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Verify your Hei-Hei account",
+                EmailTemplates.VerificationCode(user.FullName, code)
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send verification email to {Email}", user.Email);
+        }
 
         return _mapper.Map<CreateUserResponse>(user);
     }
@@ -97,11 +107,18 @@ public class AuthService : IAuthService
 
         await _context.SaveChangesAsync();
 
-        await _emailService.SendEmailAsync(
-            user.Email,
-            "Welcome to Hei-Hei!",
-            EmailTemplates.Welcome(user.FullName)
-        );
+        try
+        {
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Welcome to Hei-Hei!",
+                EmailTemplates.Welcome(user.FullName)
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send welcome email to {Email}", user.Email);
+        }
     }
 
     public async Task<LoginUserResponse> LoginAsync(LoginUserRequest request)
@@ -111,12 +128,12 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            throw new InvalidCredentialsException("Invalid credentials.");
         }
 
         if (!user.EmailConfirmed)
         {
-            throw new UnauthorizedAccessException("Please verify your email before logging in.");
+            throw new EmailNotVerifiedException("Please verify your email before logging in.");
         }
 
 
@@ -124,7 +141,7 @@ public class AuthService : IAuthService
 
         if (!isValid)
         {
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            throw new InvalidCredentialsException("Invalid credentials.");
         }
 
         var token = _jwtService.GenerateToken(user);

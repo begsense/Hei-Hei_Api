@@ -55,10 +55,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
-
-builder.Services.AddHostedService<LogUploadBackgroundService>();
-
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -74,19 +70,29 @@ builder.Services.AddAuthentication(option =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["Jwt:Key"]
+                    ?? throw new InvalidOperationException("JWT Key is not configured.")))
         };
     });
+
+builder.Services.AddHostedService<LogUploadBackgroundService>();
 
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnimatorService, AnimatorService>();
 builder.Services.AddScoped<IHeroService, HeroService>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AnimatorValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<VerifyEmailValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroRequestValidator>();
 
 var app = builder.Build();
 
@@ -98,9 +104,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseMiddleware<LoggingMiddleware>();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

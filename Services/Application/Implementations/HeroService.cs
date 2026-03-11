@@ -7,7 +7,7 @@ using Hei_Hei_Api.Responses.Heroes;
 using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Infrastructure.Abstractions;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+using Hei_Hei_Api.Helpers;
 
 namespace Hei_Hei_Api.Services.Application.Implementations;
 
@@ -28,8 +28,8 @@ public class HeroService : IHeroService
     {
         var category = Enum.Parse<HERO_CATEGORY>(request.Category, true);
         var role = Enum.Parse<HERO_ROLE>(request.Role, true);
-
-        ValidateImage(request.Image);
+        
+        FileValidationHelper.ValidateImage(request.Image);
         var imageUrl = await _s3Service.UploadPublicFileAsync(request.Image, "heroes");
 
         var hero = new Hero
@@ -58,7 +58,7 @@ public class HeroService : IHeroService
             throw new KeyNotFoundException("Hero not found.");
         }
 
-        ValidateImage(file);
+        FileValidationHelper.ValidateImage(file);
 
         if (!string.IsNullOrEmpty(hero.ImageUrl))
         {
@@ -160,27 +160,5 @@ public class HeroService : IHeroService
             Id = id,
             Message = "Hero deleted successfully."
         };
-    }
-
-    private void ValidateImage(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-        {
-            throw new ArgumentException("Image file is required.");
-        }
-
-        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
-
-        if (!allowedTypes.Contains(file.ContentType.ToLower()))
-        {
-            throw new ArgumentException("Invalid image format. Allowed formats: JPEG, PNG, WebP.");
-        }
-
-        const long maxSize = 5 * 1024 * 1024;
-
-        if (file.Length > maxSize)
-        {
-            throw new ArgumentException("Image size exceeds 5MB.");
-        }
     }
 }

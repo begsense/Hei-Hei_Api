@@ -7,11 +7,9 @@ public class LoggerService : ILoggerService
     private readonly string _logDirectory;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly IS3Service _s3Service;
-    private readonly IConfiguration _config;
 
     public LoggerService(IConfiguration configuration, IS3Service s3Service)
     {
-        _config = configuration;
         _s3Service = s3Service;
 
         _logDirectory = configuration["Logging:LogDirectory"] ?? "Logs";

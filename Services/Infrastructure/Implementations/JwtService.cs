@@ -22,6 +22,9 @@ public class JwtService : IJwtService
             ?? throw new InvalidOperationException("JWT SecretKey is not configured.");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
+        var expireHours = int.Parse(_configuration["Jwt:AccessTokenExpiration"]
+            ?? throw new InvalidOperationException("JWT AccessTokenExpiration is not configured."));
+
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -34,7 +37,7 @@ public class JwtService : IJwtService
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddHours(expireHours),
             signingCredentials: credentials
         );
 

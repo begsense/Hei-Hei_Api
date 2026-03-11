@@ -16,10 +16,6 @@ public class MappingProfile : Profile
 
         CreateMap<User, CreateUserResponse>();
 
-        CreateMap<LoginUserRequest, User>();
-
-        CreateMap<User, LoginUserResponse>();
-
         CreateMap<User, GetUserResponse>();
 
         CreateMap<UpdateUserRequest, User>()
@@ -36,8 +32,6 @@ public class MappingProfile : Profile
         CreateMap<Animator, AddAnimatorInfoResponse>();
 
         CreateMap<Animator, UpdateAnimatorResponse>();
-
-        CreateMap<CreateHeroRequest, Hero>();
 
         CreateMap<Hero, CreateHeroResponse>();
 

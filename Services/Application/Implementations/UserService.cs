@@ -17,13 +17,15 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IPasswordService _passwordService;
     private readonly IEmailService _emailService;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(AppDbContext context, IMapper mapper, IPasswordService passwordService, IEmailService emailService)
+    public UserService(AppDbContext context, IMapper mapper, IPasswordService passwordService, IEmailService emailService, ILogger<UserService> logger)
     {
         _context = context;
         _mapper = mapper;
         _passwordService = passwordService;
         _emailService = emailService;
+        _logger = logger;
     }
 
     public async Task<List<GetUserResponse>> GetAllUsersAsync()
@@ -47,7 +49,7 @@ public class UserService : IUserService
 
     public async Task<GetUserResponse> UpdateUserAsync(int id, UpdateUserRequest request, ClaimsPrincipal currentUser)
     {
-        if (!IsAdminOrOwner(id, currentUser))
+        if (!currentUser.IsAdminOrOwner(id))
         {
             throw new UnauthorizedAccessException();
         }
@@ -94,7 +96,7 @@ public class UserService : IUserService
 
     public async Task ChangePasswordAsync(int id, UpdatePasswordRequest request, ClaimsPrincipal currentUser)
     {
-        if (!IsAdminOrOwner(id, currentUser))
+        if (!currentUser.IsAdminOrOwner(id))
         {
             throw new UnauthorizedAccessException();
         }
@@ -121,11 +123,18 @@ public class UserService : IUserService
 
         await _context.SaveChangesAsync();
 
-        _ = _emailService.SendEmailAsync(
-            user.Email,
-            "Your password was changed",
-            EmailTemplates.PasswordChanged(user.FullName)
-        );
+        try
+        {
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Your password was changed",
+                EmailTemplates.PasswordChanged(user.FullName)
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send password changed email to {Email}", user.Email);
+        }
     }
 
     public async Task<GetUserResponse> ChangeUserRoleAsync(int id, UpdateUserRoleRequest request, ClaimsPrincipal currentUser)
@@ -155,7 +164,7 @@ public class UserService : IUserService
 
     public async Task DeleteUserAsync(int id, ClaimsPrincipal currentUser)
     {
-        if (!IsAdminOrOwner(id, currentUser))
+        if (!currentUser.IsAdminOrOwner(id))
         {
             throw new UnauthorizedAccessException();
         }
@@ -174,22 +183,17 @@ public class UserService : IUserService
 
         await _context.SaveChangesAsync();
 
-        _ = _emailService.SendEmailAsync(
-            email,
-            "Your account has been deleted",
-            EmailTemplates.AccountDeleted(fullName)
-        );
-    }
-
-    private bool IsAdminOrOwner(int id, ClaimsPrincipal currentUser)
-    {
-        var userIdFromToken = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userIdFromToken == null)
+        try
         {
-            return false;
+            await _emailService.SendEmailAsync(
+                email,
+                "Your account has been deleted",
+                EmailTemplates.AccountDeleted(fullName)
+            );
         }
-
-        return currentUser.IsInRole("Admin") || userIdFromToken == id.ToString();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send account deleted email to {Email}", email);
+        }
     }
 }
