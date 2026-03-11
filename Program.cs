@@ -4,7 +4,6 @@ using Hei_Hei_Api.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Amazon.S3;
 using System.Text;
 using Hei_Hei_Api.Validators;
 using Hei_Hei_Api.Services.Infrastructure.Implementations;
@@ -13,6 +12,7 @@ using Hei_Hei_Api.Services.Application.Abstractions;
 using Hei_Hei_Api.Services.Application.Implementations;
 using Hei_Hei_Api.Middlewares;
 using Hei_Hei_Api.Middleware;
+using Hei_Hei_Api.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,8 +78,8 @@ builder.Services.AddAuthentication(option =>
         };
     });
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnimatorService, AnimatorService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -88,6 +88,8 @@ builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 var app = builder.Build();
+
+await AdminSeeder.SeedAsync(app.Services);
 
 if (app.Environment.IsDevelopment())
 {
