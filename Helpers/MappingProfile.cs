@@ -4,6 +4,7 @@ using Hei_Hei_Api.Requests.Heroes;
 using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Animators;
 using Hei_Hei_Api.Responses.Heroes;
+using Hei_Hei_Api.Responses.Packages;
 using Hei_Hei_Api.Responses.Users;
 
 namespace Hei_Hei_Api.Helpers;
@@ -36,5 +37,12 @@ public class MappingProfile : Profile
         CreateMap<Hero, CreateHeroResponse>();
 
         CreateMap<Hero, GetHeroResponse>();
+
+        CreateMap<Package, CreatePackageResponse>()
+            .ForMember(dest => dest.HeroIds, opt => opt.MapFrom(src => src.Heroes.Select(h => h.Id).ToList()));
+
+        CreateMap<Package, GetPackageResponse>();
+
+        CreateMap<Package, UpdatePackageResponse>();
     }
 }
