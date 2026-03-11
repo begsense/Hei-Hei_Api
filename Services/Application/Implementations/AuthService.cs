@@ -55,7 +55,7 @@ public class AuthService : IAuthService
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        _ = _emailService.SendEmailAsync(
+        await _emailService.SendEmailAsync(
             user.Email,
             "Verify your Hei-Hei account",
             EmailTemplates.VerificationCode(user.FullName, code)
@@ -97,7 +97,7 @@ public class AuthService : IAuthService
 
         await _context.SaveChangesAsync();
 
-        _ = _emailService.SendEmailAsync(
+        await _emailService.SendEmailAsync(
             user.Email,
             "Welcome to Hei-Hei!",
             EmailTemplates.Welcome(user.FullName)
