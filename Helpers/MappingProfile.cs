@@ -4,6 +4,7 @@ using Hei_Hei_Api.Requests.Heroes;
 using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Animators;
 using Hei_Hei_Api.Responses.Heroes;
+using Hei_Hei_Api.Responses.Orders;
 using Hei_Hei_Api.Responses.Packages;
 using Hei_Hei_Api.Responses.Users;
 
@@ -44,5 +45,21 @@ public class MappingProfile : Profile
         CreateMap<Package, GetPackageResponse>();
 
         CreateMap<Package, UpdatePackageResponse>();
+
+        CreateMap<Order, CreateOrderResponse>()
+            .ForMember(dest => dest.PackageName, opt => opt.MapFrom(src => src.Package.Name));
+
+        CreateMap<Order, GetOrderResponse>()
+            .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FullName))
+            .ForMember(dest => dest.PackageName, opt => opt.MapFrom(src => src.Package.Name))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+        CreateMap<OrderAnimator, OrderAnimatorResponse>()
+            .ForMember(dest => dest.AnimatorName, opt => opt.MapFrom(src => src.Animator.User.FullName))
+            .ForMember(dest => dest.HeroName, opt => opt.MapFrom(src => src.Hero.Name));
+
+        CreateMap<Payment, PaymentResponse>()
+            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
     }
 }

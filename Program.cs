@@ -89,6 +89,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnimatorService, AnimatorService>();
 builder.Services.AddScoped<IHeroService, HeroService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AnimatorValidator>();
