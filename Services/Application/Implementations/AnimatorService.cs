@@ -72,13 +72,19 @@ public class AnimatorService : IAnimatorService
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (animator == null)
+        {
             throw new KeyNotFoundException("Animator not found.");
+        }
 
         if (!IsAdminOrOwner(animator.UserId, userClaims))
+        {
             throw new UnauthorizedAccessException("You cannot update this animator.");
+        }
 
         if (file == null || file.Length == 0)
+        {
             throw new ArgumentException("No file provided.");
+        }
 
         var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
 

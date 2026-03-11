@@ -3,6 +3,6 @@
 public interface IS3Service
 {
     Task<string> UploadPublicFileAsync(IFormFile file, string folder);
-
     Task UploadPrivateFileAsync(Stream stream, string key, string contentType);
+    Task DeleteFileAsync(string fileUrl);
 }

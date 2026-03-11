@@ -53,4 +53,21 @@ public class S3Service : IS3Service
 
         await _s3.PutObjectAsync(request);
     }
+
+    public async Task DeleteFileAsync(string fileUrl)
+    {
+        if (string.IsNullOrEmpty(fileUrl)) return;
+
+        var uri = new Uri(fileUrl);
+
+        var key = uri.AbsolutePath.TrimStart('/');
+
+        var request = new DeleteObjectRequest
+        {
+            BucketName = _bucketNamePics,
+            Key = key
+        };
+
+        await _s3.DeleteObjectAsync(request);
+    }
 }

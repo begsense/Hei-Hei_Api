@@ -12,4 +12,5 @@ public interface IHeroService
     Task<GetHeroResponse> GetHeroByIdAsync(int id);
     Task<UpdateHeroResponse> UpdateHeroAsync(int id, UpdateHeroRequest request);
     Task<DeleteHeroResponse> DeleteHeroAsync(int id);
+    Task<GetHeroResponse> UpdateHeroImageAsync(int id, IFormFile file);
 }

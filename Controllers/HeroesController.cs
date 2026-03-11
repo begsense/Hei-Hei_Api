@@ -37,11 +37,19 @@ public class HeroesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateHero([FromForm] CreateHeroRequest request)
+    public async Task<IActionResult> CreateHero(CreateHeroRequest request)
     {
         var result = await _heroService.CreateHeroAsync(request);
 
         return CreatedAtAction(nameof(GetHeroById), new { id = result.Id }, result);
+    }
+
+    [HttpPut("{id}/image")]
+    public async Task<IActionResult> UpdateHeroImage(int id, IFormFile file)
+    {
+        var result = await _heroService.UpdateHeroImageAsync(id, file);
+
+        return Ok(result);
     }
 
     [HttpPut("{id}")]
@@ -59,5 +67,4 @@ public class HeroesController : ControllerBase
 
         return Ok(result);
     }
-
 }

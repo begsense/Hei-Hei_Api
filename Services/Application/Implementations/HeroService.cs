@@ -26,35 +26,10 @@ public class HeroService : IHeroService
 
     public async Task<CreateHeroResponse> CreateHeroAsync(CreateHeroRequest request)
     {
-        if (!Enum.TryParse<TASK_PRIORITY>(request.Category, ignoreCase: true, out var category))
-        {
-            throw new ArgumentException($"Invalid Category: {request.Category}");
-        }
+        var category = Enum.Parse<HERO_CATEGORY>(request.Category, true);
+        var role = Enum.Parse<HERO_ROLE>(request.Role, true);
 
-        if (!Enum.TryParse<HERO_ROLE>(request.Role, ignoreCase: true, out var role))
-        {
-            throw new ArgumentException($"Invalid Role: {request.Role}");
-        } 
-
-        if (request.Image == null || request.Image.Length == 0)
-        {
-            throw new ArgumentException("Image file is required.");
-        }
-
-        var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
-
-        if (!allowedTypes.Contains(request.Image.ContentType.ToLower()))
-        {
-            throw new ArgumentException("Invalid image format. Allowed formats: JPEG, PNG, GIF.");
-        }
-
-        const long maxSize = 5 * 1024 * 1024;
-
-        if (request.Image.Length > maxSize)
-        {
-            throw new ArgumentException("Image size exceeds the maximum allowed size of 5 MB.");
-        }
-
+        ValidateImage(request.Image);
         var imageUrl = await _s3Service.UploadPublicFileAsync(request.Image, "heroes");
 
         var hero = new Hero
@@ -72,6 +47,32 @@ public class HeroService : IHeroService
         await _context.SaveChangesAsync();
 
         return _mapper.Map<CreateHeroResponse>(hero);
+    }
+
+    public async Task<GetHeroResponse> UpdateHeroImageAsync(int id, IFormFile file)
+    {
+        var hero = await _context.Heroes.FindAsync(id);
+
+        if (hero == null)
+        {
+            throw new KeyNotFoundException("Hero not found.");
+        }
+
+        ValidateImage(file);
+
+        if (!string.IsNullOrEmpty(hero.ImageUrl))
+        {
+            await _s3Service.DeleteFileAsync(hero.ImageUrl);
+        }
+
+        var imageUrl = await _s3Service.UploadPublicFileAsync(file, "heroes");
+
+        hero.ImageUrl = imageUrl;
+        hero.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<GetHeroResponse>(hero);
     }
 
     public async Task<List<GetHeroResponse>> GetAllHeroesAsync()
@@ -101,12 +102,12 @@ public class HeroService : IHeroService
         if (hero == null)
             throw new KeyNotFoundException("Hero not found.");
 
-        TASK_PRIORITY? category = null;
+        HERO_CATEGORY? category = null;
         HERO_ROLE? role = null;
 
         if (request.Category != null)
         {
-            if (!Enum.TryParse<TASK_PRIORITY>(request.Category, true, out var parsedCategory))
+            if (!Enum.TryParse<HERO_CATEGORY>(request.Category, true, out var parsedCategory))
             {
                 throw new ArgumentException($"Invalid Category: {request.Category}");
             }
@@ -146,6 +147,11 @@ public class HeroService : IHeroService
             throw new KeyNotFoundException("Hero not found.");
         }
 
+        if (!string.IsNullOrEmpty(hero.ImageUrl))
+        {
+            await _s3Service.DeleteFileAsync(hero.ImageUrl);
+        }
+
         _context.Heroes.Remove(hero);
 
         await _context.SaveChangesAsync();
@@ -154,5 +160,27 @@ public class HeroService : IHeroService
             Id = id,
             Message = "Hero deleted successfully."
         };
+    }
+
+    private void ValidateImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentException("Image file is required.");
+        }
+
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+
+        if (!allowedTypes.Contains(file.ContentType.ToLower()))
+        {
+            throw new ArgumentException("Invalid image format. Allowed formats: JPEG, PNG, WebP.");
+        }
+
+        const long maxSize = 5 * 1024 * 1024;
+
+        if (file.Length > maxSize)
+        {
+            throw new ArgumentException("Image size exceeds 5MB.");
+        }
     }
 }

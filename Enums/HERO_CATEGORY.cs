@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum TASK_PRIORITY
+public enum HERO_CATEGORY
 {
     FullCostume,
     Mascot
