@@ -4,6 +4,7 @@ using Hei_Hei_Api.Requests.Heroes;
 using Hei_Hei_Api.Requests.Users;
 using Hei_Hei_Api.Responses.Animators;
 using Hei_Hei_Api.Responses.Heroes;
+using Hei_Hei_Api.Responses.OrderAnimators;
 using Hei_Hei_Api.Responses.Orders;
 using Hei_Hei_Api.Responses.Packages;
 using Hei_Hei_Api.Responses.Users;
@@ -61,5 +62,11 @@ public class MappingProfile : Profile
         CreateMap<Payment, PaymentResponse>()
             .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+        CreateMap<OrderAnimator, GetOrderAnimatorResponse>()
+            .ForMember(dest => dest.AnimatorName, opt => opt.MapFrom(src => src.Animator.User.FullName))
+            .ForMember(dest => dest.HeroName, opt => opt.MapFrom(src => src.Hero.Name));
+
+        CreateMap<OrderAnimator, UpdateOrderAnimatorResponse>();
     }
 }
