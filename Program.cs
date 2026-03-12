@@ -107,6 +107,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreatePaymentRequestValidat
 builder.Services.AddValidatorsFromAssemblyContaining<UpdatePaymentStatusRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateReviewRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateReviewRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateOrderAnimatorRequestValidator>();
 
 var app = builder.Build();
 
