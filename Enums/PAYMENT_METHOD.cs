@@ -1,6 +1,6 @@
 ﻿namespace Hei_Hei_Api.Enums;
 
-public enum PaymentMethod
+public enum PAYMENT_METHOD
 {
     CreditCard,
     BankTransfer,

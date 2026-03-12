@@ -7,7 +7,7 @@ public class Payment : BaseEntity
 {
     public decimal Amount { get; set; }
     public string Currency { get; set; }
-    public PaymentMethod PaymentMethod { get; set; }
+    public PAYMENT_METHOD PaymentMethod { get; set; }
     public DateTime? PaymentDate { get; set; }
     public string TransactionId { get; set; }
     public PAYMENT_STATUS Status { get; set; }

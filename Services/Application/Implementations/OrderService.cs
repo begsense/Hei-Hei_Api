@@ -173,7 +173,7 @@ public class OrderService : IOrderService
             throw new InvalidOperationException("Payment already exists for this order.");
         }
 
-        var paymentMethod = Enum.Parse<PaymentMethod>(request.PaymentMethod, true);
+        var paymentMethod = Enum.Parse<PAYMENT_METHOD>(request.PaymentMethod, true);
 
         var payment = new Payment
         {

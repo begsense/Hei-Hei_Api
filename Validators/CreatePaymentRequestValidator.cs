@@ -17,7 +17,7 @@ public class CreatePaymentRequestValidator : AbstractValidator<CreatePaymentRequ
 
         RuleFor(x => x.PaymentMethod)
             .NotEmpty().WithMessage("Payment method is required.")
-            .Must(m => Enum.TryParse<PaymentMethod>(m, true, out _))
+            .Must(m => Enum.TryParse<PAYMENT_METHOD>(m, true, out _))
             .WithMessage("Invalid payment method.");
 
         RuleFor(x => x.TransactionId)
