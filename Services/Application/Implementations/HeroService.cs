@@ -153,7 +153,6 @@ public class HeroService : IHeroService
         }
 
         _context.Heroes.Remove(hero);
-
         await _context.SaveChangesAsync();
 
         return new DeleteHeroResponse { 

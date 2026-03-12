@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Hei_Hei_Api.Data;
 using Hei_Hei_Api.Enums;
+using Hei_Hei_Api.Helpers;
 using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Orders;
 using Hei_Hei_Api.Responses.Orders;
@@ -23,7 +24,7 @@ public class OrderService : IOrderService
 
     public async Task<CreateOrderResponse> CreateOrderAsync(CreateOrderRequest request, ClaimsPrincipal userClaims)
     {
-        var userId = GetUserId(userClaims);
+        var userId = GetUserHelper.GetUserId(userClaims);
 
         var package = await _context.Packages.FindAsync(request.PackageId);
 
@@ -59,7 +60,8 @@ public class OrderService : IOrderService
 
         if (!userClaims.IsInRole("Admin"))
         {
-            var userId = GetUserId(userClaims);
+            var userId = GetUserHelper.GetUserId(userClaims);
+
             if (order.UserId != userId)
             {
                 throw new UnauthorizedAccessException();
@@ -78,7 +80,7 @@ public class OrderService : IOrderService
 
     public async Task<List<GetOrderResponse>> GetMyOrdersAsync(ClaimsPrincipal userClaims)
     {
-        var userId = GetUserId(userClaims);
+        var userId = GetUserHelper.GetUserId(userClaims);
 
         var orders = await GetOrderWithIncludes()
             .Where(o => o.UserId == userId)
@@ -97,10 +99,7 @@ public class OrderService : IOrderService
             throw new KeyNotFoundException("Order not found.");
         }
 
-        if (!Enum.TryParse<ORDER_STATUS>(request.Status, true, out var status))
-        {
-            throw new ArgumentException($"Invalid status: {request.Status}");
-        }
+        var status = Enum.Parse<ORDER_STATUS>(request.Status, true);
 
         order.Status = status;
         order.UpdatedAt = DateTime.UtcNow;
@@ -174,10 +173,7 @@ public class OrderService : IOrderService
             throw new InvalidOperationException("Payment already exists for this order.");
         }
 
-        if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
-        {
-            throw new ArgumentException($"Invalid payment method: {request.PaymentMethod}");
-        }
+        var paymentMethod = Enum.Parse<PaymentMethod>(request.PaymentMethod, true);
 
         var payment = new Payment
         {
@@ -230,17 +226,5 @@ public class OrderService : IOrderService
                     .ThenInclude(a => a.User)
             .Include(o => o.OrderAnimators)
                 .ThenInclude(oa => oa.Hero);
-    }
-
-    private int GetUserId(ClaimsPrincipal userClaims)
-    {
-        var userIdClaim = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userIdClaim == null)
-        {
-            throw new UnauthorizedAccessException("User not authenticated.");
-        }
-
-        return int.Parse(userIdClaim);
     }
 }

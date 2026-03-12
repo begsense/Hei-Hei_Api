@@ -29,7 +29,7 @@ public class AnimatorService : IAnimatorService
         AddAnimatorInfoRequest request,
         ClaimsPrincipal userClaims)
     {
-        var userId = GetUserId(userClaims);
+        var userId = GetUserHelper.GetUserId(userClaims);
 
         var exists = await _context.Animators
             .AnyAsync(a => a.UserId == userId);
@@ -53,7 +53,7 @@ public class AnimatorService : IAnimatorService
 
     public async Task<GetAnimatorResponse> GetMyAnimatorProfileAsync(ClaimsPrincipal userClaims)
     {
-        var userId = GetUserId(userClaims);
+        var userId = GetUserHelper.GetUserId(userClaims);
 
         var animator = await _context.Animators
             .Include(a => a.User)
@@ -136,6 +136,11 @@ public class AnimatorService : IAnimatorService
             throw new UnauthorizedAccessException("You cannot delete this animator.");
         }
 
+        if (!string.IsNullOrEmpty(animator.ImageUrl))
+        {
+            await _s3Service.DeleteFileAsync(animator.ImageUrl);
+        }
+
         _context.Animators.Remove(animator);
         await _context.SaveChangesAsync();
 
@@ -167,17 +172,5 @@ public class AnimatorService : IAnimatorService
             .ToListAsync();
 
         return _mapper.Map<List<GetAnimatorResponse>>(animators);
-    }
-
-    private int GetUserId(ClaimsPrincipal userClaims)
-    {
-        var userIdClaim = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userIdClaim == null)
-        {
-            throw new UnauthorizedAccessException("User not authenticated.");
-        }
-
-        return int.Parse(userIdClaim);
     }
 }

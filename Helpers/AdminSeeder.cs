@@ -35,8 +35,8 @@ public static class AdminSeeder
             UserName = userName,
             PasswordHash = passwordHash,
             FullName = fullName,
-            PhoneNumber = fullName,
-            HomeAddress = fullName,
+            PhoneNumber = phoneNumber,
+            HomeAddress = homeAddress,
             Role = USER_ROLE.Admin,
             EmailConfirmed = true,
             CreatedAt = DateTime.UtcNow

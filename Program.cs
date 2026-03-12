@@ -95,6 +95,11 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AnimatorValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<VerifyEmailValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateHeroRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePackageRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateOrderRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateOrderStatusRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateHeroRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePaymentRequestValidator>();
 
 var app = builder.Build();
 
