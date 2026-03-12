@@ -41,6 +41,8 @@ public class MappingProfile : Profile
 
         CreateMap<Hero, GetHeroResponse>();
 
+        CreateMap<Hero, UpdateHeroResponse>();
+
         CreateMap<Package, CreatePackageResponse>()
             .ForMember(dest => dest.HeroIds, opt => opt.MapFrom(src => src.Heroes.Select(h => h.Id).ToList()));
 

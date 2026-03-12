@@ -7,6 +7,7 @@ public class UpdateHeroResponse
     public decimal Price { get; set; }
     public string Description { get; set; }
     public string ImageUrl { get; set; }
+    public DateTime UpdatedAt { get; set; }
     public string Category { get; set; }
     public string Role { get; set; }
 }

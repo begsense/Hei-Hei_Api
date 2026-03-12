@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hei_Hei_Api.Data;
+using Hei_Hei_Api.Enums;
 using Hei_Hei_Api.Helpers;
 using Hei_Hei_Api.Models;
 using Hei_Hei_Api.Requests.Animators;
@@ -29,10 +30,19 @@ public class AnimatorService : IAnimatorService
         AddAnimatorInfoRequest request,
         ClaimsPrincipal userClaims)
     {
-        var userId = GetUserHelper.GetUserId(userClaims);
+        if (!userClaims.IsInRole("Admin"))
+        {
+            throw new UnauthorizedAccessException("Only admins can create animator profiles.");
+        }
 
-        var exists = await _context.Animators
-            .AnyAsync(a => a.UserId == userId);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+
+        if (user == null)
+        {
+            throw new KeyNotFoundException("User not found.");
+        }
+
+        var exists = await _context.Animators.AnyAsync(a => a.UserId == request.UserId);
 
         if (exists)
         {
@@ -42,8 +52,10 @@ public class AnimatorService : IAnimatorService
         var animator = new Animator
         {
             Bio = request.Bio,
-            UserId = userId
+            UserId = request.UserId
         };
+
+        user.Role = USER_ROLE.Animator;
 
         _context.Animators.Add(animator);
         await _context.SaveChangesAsync();
@@ -124,7 +136,8 @@ public class AnimatorService : IAnimatorService
     public async Task<DeleteAnimatorResponse> DeleteAnimatorAsync(int id, ClaimsPrincipal userClaims)
     {
         var animator = await _context.Animators
-            .FirstOrDefaultAsync(a => a.Id == id);
+        .Include(a => a.User)
+        .FirstOrDefaultAsync(a => a.Id == id);
 
         if (animator == null)
         {
@@ -140,6 +153,8 @@ public class AnimatorService : IAnimatorService
         {
             await _s3Service.DeleteFileAsync(animator.ImageUrl);
         }
+
+        animator.User.Role = USER_ROLE.User;
 
         _context.Animators.Remove(animator);
         await _context.SaveChangesAsync();

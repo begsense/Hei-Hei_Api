@@ -16,7 +16,7 @@ namespace Hei_Hei_Api.Controllers
             _animatorService = animatorService;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAnimatorInfo(AddAnimatorInfoRequest request)
         {
@@ -52,7 +52,7 @@ namespace Hei_Hei_Api.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnimator(int id)
         {
