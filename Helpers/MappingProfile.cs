@@ -7,6 +7,7 @@ using Hei_Hei_Api.Responses.Heroes;
 using Hei_Hei_Api.Responses.OrderAnimators;
 using Hei_Hei_Api.Responses.Orders;
 using Hei_Hei_Api.Responses.Packages;
+using Hei_Hei_Api.Responses.Reviews;
 using Hei_Hei_Api.Responses.Users;
 
 namespace Hei_Hei_Api.Helpers;
@@ -68,5 +69,12 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.HeroName, opt => opt.MapFrom(src => src.Hero.Name));
 
         CreateMap<OrderAnimator, UpdateOrderAnimatorResponse>();
+
+        CreateMap<Review, GetReviewResponse>()
+            .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FullName));
+
+        CreateMap<Review, CreateReviewResponse>();
+
+        CreateMap<Review, UpdateReviewResponse>();
     }
 }

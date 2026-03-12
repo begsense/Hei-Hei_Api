@@ -92,6 +92,7 @@ builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IOrderAnimatorService, OrderAnimatorService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AnimatorValidator>();
@@ -103,6 +104,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<UpdateOrderStatusRequestVal
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateHeroRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePaymentRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdatePaymentStatusRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateReviewRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateReviewRequestValidator>();
 
 var app = builder.Build();
 
